@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anaga — hidden route</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0b;
+      --surface: #161612;
+      --border: #2e2d28;
+      --text: #e8e5de;
+      --muted: #a8a59e;
+      --accent: #c4aa72;
+      --accent-dim: rgba(196, 170, 114, 0.13);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Georgia', serif;
+      line-height: 1.75;
+    }
+
+    /* ── HEADER ───────────────────────────── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      justify-content: flex-end;
+      padding: 1.1rem 2rem;
+      background: linear-gradient(to bottom, rgba(13,13,11,0.85) 0%, transparent 100%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .lang-switcher {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      border-right: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      padding: 0.4rem 0.75rem;
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .lang-btn:last-child { border-right: none; }
+
+    .lang-btn:hover { color: var(--text); background: var(--surface); }
+
+    .lang-btn.active {
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* ── HERO ─────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      background:
+        radial-gradient(ellipse at 50% 60%, rgba(20,18,10,0.92) 0%, var(--bg) 70%),
+        url('photos/ridge.jpg') center/cover no-repeat;
+      position: relative;
+    }
+
+    .hero-tag {
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 9vw, 6rem);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      color: #fff;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: #b0ada6;
+      font-style: italic;
+      max-width: 480px;
+    }
+
+    .hero-arrow {
+      position: absolute;
+      bottom: 2.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: #3a3830;
+      text-transform: uppercase;
+    }
+
+    /* ── LAYOUT ───────────────────────────── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .step-section {
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .step-label {
+      font-family: 'Courier New', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+      display: block;
+    }
+
+    h2 {
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 400;
+      color: #fff;
+      margin-bottom: 1.2rem;
+    }
+
+    p {
+      color: var(--muted);
+      max-width: 620px;
+      margin-bottom: 0.9rem;
+    }
+
+    /* ── MAP + TEXT ───────────────────────── */
+    .map-text {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 2rem;
+      align-items: start;
+      margin-top: 1.5rem;
+    }
+
+    .map-text.reverse { grid-template-columns: 1fr 200px; }
+    .map-text.reverse .map-phone { order: 2; }
+    .map-text.reverse .text-block { order: 1; }
+
+    .map-phone {
+      cursor: zoom-in;
+      flex-shrink: 0;
+      aspect-ratio: 9/17;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .map-phone img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .map-phone:hover img { transform: scale(1.02); }
+
+    .map-phone-cap {
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .text-block h3 {
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.8rem;
+    }
+
+    /* ── PHOTO ────────────────────────────── */
+    .photo-wrap {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      cursor: zoom-in;
+      position: relative;
+      margin-top: 2rem;
+    }
+
+    .photo-wrap img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .photo-wrap:hover img { transform: scale(1.03); }
+
+    .photo-cap {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 0.6rem 0.9rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.45);
+      background: linear-gradient(transparent, rgba(0,0,0,0.55));
+    }
+
+    .photo-tall { aspect-ratio: 3/4; }
+    .photo-wide { aspect-ratio: 16/7; }
+    .photo-auto { aspect-ratio: 4/5; }
+
+    .photo-tall img  { aspect-ratio: 3/4; }
+    .photo-wide img  { aspect-ratio: 16/7; }
+    .photo-auto img  { aspect-ratio: auto; max-height: 540px; }
+
+    /* ── SHIMMER LOADING ──────────────────── */
+    @keyframes shimmer {
+      0%   { background-position: -800px 0; }
+      100% { background-position:  800px 0; }
+    }
+
+    .photo-wrap,
+    .map-phone {
+      background: linear-gradient(
+        90deg,
+        #1c1c19 0%,
+        #1c1c19 25%,
+        #3a3935 50%,
+        #1c1c19 75%,
+        #1c1c19 100%
+      );
+      background-size: 800px 100%;
+      animation: shimmer 1.8s ease-in-out infinite;
+    }
+
+    .photo-wrap img,
+    .map-phone img {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── MAPS LINK ────────────────────────── */
+    .maps-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1.1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(184,160,106,0.3);
+      padding-bottom: 0.1rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .maps-link:hover { color: #d4b97e; border-color: rgba(184,160,106,0.7); }
+
+    .anchor-ref {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(184,160,106,0.4);
+    }
+
+    .anchor-ref:hover { border-color: var(--accent); }
+
+    /* ── HASHTAG CHIPS ────────────────────── */
+    .hashtags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .hashtag {
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 0.3rem 0.65rem;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .hashtag:hover {
+      color: var(--accent);
+      border-color: rgba(184,160,106,0.4);
+    }
+
+    /* ── NOTE ─────────────────────────────── */
+    .note {
+      margin-top: 1.5rem;
+      border-left: 2px solid var(--accent);
+      padding: 0.9rem 1.3rem;
+      background: var(--accent-dim);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .note p { margin: 0; color: var(--text); font-size: 0.92rem; max-width: none; }
+
+    /* ── FOOTER ───────────────────────────── */
+    footer {
+      padding: 5rem 0 4rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    footer p {
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: #2e2d28;
+      text-transform: uppercase;
+      margin: 0 auto;
+    }
+
+    /* ── LIGHTBOX ─────────────────────────── */
+    #lb {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.94);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+
+    #lb.open { display: flex; }
+
+    #lb img {
+      max-width: 92vw;
+      max-height: 92vh;
+      object-fit: contain;
+      border-radius: 3px;
+      box-shadow: 0 0 80px rgba(0,0,0,0.8);
+    }
+
+    #lb-close {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 2.6rem;
+      height: 2.6rem;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s;
+      z-index: 1001;
+    }
+
+    #lb-close:hover { background: rgba(255,255,255,0.22); }
+
+    /* ── RESPONSIVE ───────────────────────── */
+    @media (max-width: 620px) {
+      .map-text, .map-text.reverse { grid-template-columns: 1fr; }
+      .map-text .map-phone,
+      .map-text.reverse .map-phone { order: unset; max-width: 240px; }
+      .map-text.reverse .text-block { order: unset; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+    </div>
+  </header>
+
+  <!-- LIGHTBOX -->
+  <div id="lb">
+    <button id="lb-close" aria-label="close">✕</button>
+    <img id="lb-img" src="" alt="" />
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-tag" data-i18n="hero.tag">Tenerife · Anaga · hidden route</div>
+    <h1>Anaga</h1>
+    <p class="hero-sub" data-i18n="hero.sub">Not on any map. Untouched by tourists. Just beautiful.</p>
+    <div class="hero-arrow" data-i18n="hero.arrow">↓ scroll</div>
+  </section>
+
+  <!-- 01 START -->
+  <section class="step-section">
+    <div class="container">
+      <span class="step-label" data-i18n="s1.label">01 — Start</span>
+      <h2 data-i18n="s1.h2">Cruz del Carmen</h2>
+      <h3 data-i18n="s1.h3" style="font-size:1.15rem; font-weight:400; color:var(--text); margin-bottom:0.8rem;">How to get there</h3>
+      <p data-i18n="s1.p1">Take a bus from La Laguna bus station to the Cruz del Carmen stop. From there, continue on foot.</p>
+      <a class="maps-link" href="https://maps.app.goo.gl/rTcKcBag3GdJuwF6A" target="_blank" rel="noopener" data-i18n="s1.mapslink">↗ Cruz del Carmen on Google Maps</a>
+      <div class="map-phone" data-src="photos/map-overview.png" style="margin-top:2rem; max-width:220px;">
+        <img src="photos/map-overview.png" alt="Cruz del Carmen on the map" loading="lazy" />
+        <div class="map-phone-cap" data-i18n="s1.mapcap">Cruz del Carmen · Anaga</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 ROAD -->
+  <section class="step-section">
+    <div class="container">
+      <span class="step-label" data-i18n="s2.label">02 — The Road</span>
+      <h2 data-i18n="s2.h2">~32 minutes along the road</h2>
+      <div class="map-text reverse">
+        <div class="text-block">
+          <h3 data-i18n="s2.h3">The route passes through a tunnel of trees</h3>
+          <p data-i18n="s2.p1">Walk for about 32 minutes along the road. Along the way it passes through a tunnel of ancient laurel trees — branches closing overhead, mossy stone walls on both sides, light at the far end.</p>
+          <a class="maps-link" href="https://maps.app.goo.gl/yp4ywmBsAgAWD9tL7" target="_blank" rel="noopener" data-i18n="s2.mapslink">↗ Route on Google Maps</a>
+        </div>
+        <div class="map-phone" id="s2-map" data-src="photos/map-route.png">
+          <img src="photos/map-route.png" alt="Route from Cruz del Carmen" loading="lazy" />
+          <div class="map-phone-cap" data-i18n="s2.mapcap">route · ~32 min</div>
+        </div>
+      </div>
+      <div class="photo-wrap photo-tall" data-src="photos/tunnel.png" style="max-width:480px; margin-top:2.5rem;">
+        <img src="photos/tunnel.png" alt="Laurel tree tunnel" loading="lazy" />
+        <div class="photo-cap" data-i18n="s2.photocap">tunnel · along the road to the trail</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 TURN -->
+  <section class="step-section">
+    <div class="container">
+      <span class="step-label" data-i18n="s3.label">03 — The Turn</span>
+      <h2 data-i18n="s3.h2">Unmarked trail</h2>
+      <div class="map-text">
+        <div class="map-phone" data-src="photos/map-turn.png">
+          <img src="photos/map-turn.png" alt="Turn onto unmarked trail" loading="lazy" />
+          <div class="map-phone-cap" data-i18n="s3.mapcap">turn right</div>
+        </div>
+        <div class="text-block">
+          <h3 data-i18n="s3.h3">Turn right at the end of the stretch</h3>
+          <p data-i18n="s3.p1hint">At the end of the route shown in the previous map, you can already see the trail veering off to the right.</p>
+          <p data-i18n="s3.p1">At the end of this road section, turn right onto a trail. It appears on no map, but is perfectly safe in dry weather.</p>
+          <a class="maps-link" href="https://maps.app.goo.gl/F99USbsCg19e6kKB8" target="_blank" rel="noopener" data-i18n="s3.mapslink">↗ Location on Google Maps</a>
+          <div class="note" style="margin-top:1.2rem;">
+            <p data-i18n="s3.note">After rain — slippery. Go only in clear, dry weather.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 RIDGE -->
+  <section class="step-section">
+    <div class="container">
+      <span class="step-label" data-i18n="s4.label">04 — The Ridge</span>
+      <h2 data-i18n="s4.h2">Along the ridge</h2>
+      <div class="map-text reverse">
+        <div class="text-block">
+          <h3 data-i18n="s4.h3">Walk along the ridge — stunning views</h3>
+          <p data-i18n="s4.p1">The trail runs along the ridge with views across the whole of Anaga. Clear weather is essential — in overcast conditions, clouds cover everything.</p>
+        </div>
+        <div class="map-phone" data-src="photos/map-ridge.png">
+          <img src="photos/map-ridge.png" alt="Ridge route" loading="lazy" />
+          <div class="map-phone-cap" data-i18n="s4.mapcap">ridge · trail coordinates</div>
+          <div class="hashtags">
+            <a class="hashtag" href="https://maps.app.goo.gl/hfXMKTT9cKX9onuk8" target="_blank" rel="noopener">#MiradorMontesDeAnaga</a>
+            <a class="hashtag" href="https://maps.app.goo.gl/U58tijYkcpXKaWPX7" target="_blank" rel="noopener">#SenderoDeLaCumbre</a>
+            <a class="hashtag" href="https://maps.app.goo.gl/aRhe2Tq9bUP2LusL6" target="_blank" rel="noopener">#VíaPicoElInglés</a>
+          </div>
+        </div>
+      </div>
+      <div class="photo-wrap photo-wide" data-src="photos/ridge.jpg" style="margin-top:2.5rem;">
+        <img src="photos/ridge.jpg" alt="View from the Anaga ridge" loading="lazy" />
+        <div class="photo-cap" data-i18n="s4.photocap1">view from the ridge · Anaga</div>
+      </div>
+      <div class="photo-wrap photo-auto" data-src="photos/buddha.jpg" style="margin-top:0.75rem; max-width:380px;">
+        <img src="photos/buddha.jpg" alt="Buddha in the rock" loading="lazy" />
+        <div class="photo-cap" data-i18n="s4.photocap2">buddha in the rock · along the way</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 BARRANCO -->
+  <section class="step-section">
+    <div class="container">
+      <span class="step-label" data-i18n="s5.label">05 — The End</span>
+      <h2 data-i18n="s5.h2">Barranco → Tahodio</h2>
+      <div class="map-text">
+        <div class="map-phone" data-src="photos/map-tahodio.png">
+          <img src="photos/map-tahodio.png" alt="Descent to Tahodio" loading="lazy" />
+          <div class="map-phone-cap" data-i18n="s5.mapcap">Vía Pico el Inglés → Tahodio</div>
+        </div>
+        <div class="text-block">
+          <h3 data-i18n="s5.h3">Descent through the barranco to town</h3>
+          <p data-i18n="s5.p1">From Vía Pico el Inglés the trail follows the barranco down to Tahodio. Along the way other paths branch off — depends on your energy and time.</p>
+          <p data-i18n="s5.p2">On the rocky cliffs across the barranco you may spot black goats leaping between ledges, keeping you company for a stretch.</p>
+        </div>
+      </div>
+      <div class="photo-wrap photo-auto" data-src="photos/goats.jpg" style="margin-top:2.5rem; max-width:420px;">
+        <img src="photos/goats.jpg" alt="Goats on the barranco cliffs" loading="lazy" />
+        <div class="photo-cap" data-i18n="s5.photocap">goats · barranco</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p data-i18n="footer.text">m-anaga-01 · Tenerife · handcrafted</p>
+    </div>
+  </footer>
+
+  <script>
+    const T = {
+      en: {
+        'hero.tag':      'Tenerife · Anaga · hidden route',
+        'hero.sub':      'A trail in Anaga.',
+        'hero.arrow':    '↓ scroll',
+        's1.label':      '01 — Start',
+        's1.h2':         'Cruz del Carmen',
+        's1.mapcap':     'Cruz del Carmen · Anaga',
+        's1.mapslink':   '↗ Cruz del Carmen on Google Maps',
+        's1.h3':         'How to get there',
+        's1.p1':         'Take a bus from La Laguna bus station to the Cruz del Carmen stop. From there, continue on foot.',
+        's2.label':      '02 — The Road',
+        's2.h2':         '~32 minutes along the road',
+        's2.mapcap':     'route · ~32 min',
+        's2.mapslink':   '↗ Route on Google Maps',
+        's2.h3':         'The road leads through a living tunnel',
+        's2.p1':         'About half an hour in, the road quietly changes. Trees close in from both sides, their branches meeting overhead. Stone walls thick with moss, air that feels different — damp and still. And somewhere at the end, light.',
+        's2.photocap':   'tunnel · along the road to the trail',
+        's3.label':      '03 — The Turn',
+        's3.h2':         'Unmarked trail',
+        's3.mapcap':     'turn right',
+        's3.h3':         'Turn right at the end of the stretch',
+        's3.p1hint':     'The trail starts exactly where the route on the <a class="anchor-ref" href="#s2-map">previous map</a> ends — at the dropped pin.',
+        's3.p1':         'At the end of this road section, turn right onto a trail. It appears on no map, but is perfectly safe in dry weather.',
+        's3.mapslink':   '↗ Location on Google Maps',
+        's3.note':       'After rain — slippery. Go only in clear, dry weather.',
+        's4.label':      '04 — The Ridge',
+        's4.h2':         'Along the ridge',
+        's4.mapcap':     'ridge · trail coordinates',
+        's4.h3':         'The views open up across all of Anaga',
+        's4.p1':         'Clear weather is essential here — in overcast conditions, clouds close in and cover everything.',
+        's4.photocap1':  'view from the ridge · Anaga',
+        's4.photocap2':  'buddha in the rock · along the way',
+        's5.label':      '05 — The End',
+        's5.h2':         'Barranco → Tahodio',
+        's5.mapcap':     'Vía Pico el Inglés → Tahodio',
+        's5.h3':         'Descent through the barranco to town',
+        's5.p1':         'From Vía Pico el Inglés the trail follows the barranco down to Tahodio. More to explore along the way, if you have the energy.',
+        's5.p2':         'On the other side of the barranco, black goats kept pace with me the whole way — jumping from rock to rock as I walked.',
+        's5.photocap':   'goats · barranco',
+        'footer.text':   'm-anaga-01 · Tenerife · handcrafted',
+      },
+      de: {
+        'hero.tag':      'Teneriffa · Anaga · verborgene Route',
+        'hero.sub':      'Ein Pfad in Anaga.',
+        'hero.arrow':    '↓ scrollen',
+        's1.label':      '01 — Start',
+        's1.h2':         'Cruz del Carmen',
+        's1.mapcap':     'Cruz del Carmen · Anaga',
+        's1.mapslink':   '↗ Cruz del Carmen auf Google Maps',
+        's1.h3':         'So kommt man hin',
+        's1.p1':         'Nimm den Bus vom Busbahnhof La Laguna bis zur Haltestelle Cruz del Carmen. Von dort geht es zu Fuß weiter.',
+        's2.label':      '02 — Der Weg',
+        's2.h2':         '~32 Minuten entlang der Straße',
+        's2.mapcap':     'Route · ~32 Min.',
+        's2.mapslink':   '↗ Route auf Google Maps',
+        's2.h3':         'Die Straße führt durch einen lebendigen Tunnel',
+        's2.p1':         'Nach etwa einer halben Stunde verändert sich die Straße still und leise. Bäume schließen sich von beiden Seiten, ihre Äste treffen sich über dem Kopf. Steinmauern dicht mit Moos, die Luft fühlt sich anders an — feucht und still. Und irgendwo am Ende, Licht.',
+        's2.photocap':   'Tunnel · auf dem Weg zum Pfad',
+        's3.label':      '03 — Die Abzweigung',
+        's3.h2':         'Nicht eingetragener Pfad',
+        's3.mapcap':     'rechts abbiegen',
+        's3.h3':         'Am Ende des Abschnitts: nach rechts',
+        's3.p1hint':     'Der Pfad beginnt genau dort, wo die Route auf der <a class="anchor-ref" href="#s2-map">vorherigen Karte</a> endet — an der markierten Nadel.',
+        's3.p1':         'Am Ende dieses Abschnitts geht es rechts auf einen Pfad. Er ist auf keiner Karte eingetragen, aber bei trockenem Wetter völlig sicher.',
+        's3.mapslink':   '↗ Standort auf Google Maps',
+        's3.note':       'Nach Regen — rutschig. Nur bei klarem, trockenem Wetter gehen.',
+        's4.label':      '04 — Der Kamm',
+        's4.h2':         'Entlang des Kamms',
+        's4.mapcap':     'Kamm · Pfadkoordinaten',
+        's4.h3':         'Der Blick öffnet sich über ganz Anaga',
+        's4.p1':         'Klares Wetter ist hier entscheidend — bei Bewölkung schließen sich die Wolken und verdecken alles.',
+        's4.photocap1':  'Aussicht vom Kamm · Anaga',
+        's4.photocap2':  'Buddha im Fels · unterwegs',
+        's5.label':      '05 — Das Ende',
+        's5.h2':         'Barranco → Tahodio',
+        's5.mapcap':     'Vía Pico el Inglés → Tahodio',
+        's5.h3':         'Abstieg durch den Barranco zur Stadt',
+        's5.p1':         'Von Vía Pico el Inglés folgt der Pfad dem Barranco hinunter nach Tahodio. Unterwegs gibt es noch mehr zu entdecken — wenn die Energie reicht.',
+        's5.p2':         'Auf der anderen Seite des Barrancos begleiteten mich schwarze Ziegen den ganzen Weg — sie sprangen von Fels zu Fels, während ich lief.',
+        's5.photocap':   'Ziegen · Barranco',
+        'footer.text':   'm-anaga-01 · Teneriffa · handgemacht',
+      },
+      ru: {
+        'hero.tag':      'Тенерифе · Анага · скрытый маршрут',
+        'hero.sub':      'Тропа в Анаге.',
+        'hero.arrow':    '↓ прокрути',
+        's1.label':      '01 — Старт',
+        's1.h2':         'Cruz del Carmen',
+        's1.mapcap':     'Cruz del Carmen · Анага',
+        's1.mapslink':   '↗ Cruz del Carmen на Google Maps',
+        's1.h3':         'Как добраться',
+        's1.p1':         'Садишься на автобус с автостанции Ла Лагуны и едешь до остановки Cruz del Carmen. Дальше — пешком.',
+        's2.label':      '02 — Дорога',
+        's2.h2':         '~32 минуты вдоль дороги',
+        's2.mapcap':     'маршрут · ~32 мин',
+        's2.mapslink':   '↗ Маршрут на Google Maps',
+        's2.h3':         'Дорога ведёт через живой туннель',
+        's2.p1':         'Минут через тридцать дорога незаметно меняется. Деревья с обеих сторон смыкаются над головой, каменные стены сплошь в мху, воздух другой — влажный и тихий. И где-то впереди — свет.',
+        's2.photocap':   'туннель · по дороге к тропе',
+        's3.label':      '03 — Поворот',
+        's3.h2':         'Незанесённая тропа',
+        's3.mapcap':     'поворот направо',
+        's3.h3':         'Поворот направо в конце отрезка',
+        's3.p1hint':     'Тропа начинается ровно там, где заканчивается отмеченный маршрут на карте <a class="anchor-ref" href="#s2-map">выше</a> — в точке булавки.',
+        's3.p1':         'В конце этого участка дороги — поворот направо на тропу. Она не отмечена ни на одной карте, но вполне безопасна в сухую погоду.',
+        's3.mapslink':   '↗ Место на Google Maps',
+        's3.note':       'После дождя — скользко. Идти только в ясную погоду.',
+        's4.label':      '04 — Хребет',
+        's4.h2':         'По хребту',
+        's4.mapcap':     'хребет · координаты тропы',
+        's4.h3':         'Идёшь по хребту — там очень красиво',
+        's4.p1':         'Главное — ясная погода: в пасмурную облака закрывают всё.',
+        's4.photocap1':  'вид с хребта · Анага',
+        's4.photocap2':  'будда в скале · по дороге',
+        's5.label':      '05 — Финал',
+        's5.h2':         'Барранко → Tahodio',
+        's5.mapcap':     'Vía Pico el Inglés → Tahodio',
+        's5.h3':         'Спуск через барранко к городу',
+        's5.p1':         'От Vía Pico el Inglés тропа идёт вдоль барранко и выводит к Tahodio. По пути можно найти другие тропы — зависит от сил и времени.',
+        's5.p2':         'По другую сторону барранко меня весь путь сопровождали чёрные козы — прыгали по скалам, пока я шёл.',
+        's5.photocap':   'козы · барранко',
+        'footer.text':   'm-anaga-01 · Тенерифе · составлено вручную',
+      },
+    };
+
+    const nodes = document.querySelectorAll('[data-i18n]');
+
+    function setLang(lang) {
+      const dict = T[lang];
+      nodes.forEach(el => {
+        const key = el.dataset.i18n;
+        if (dict[key] !== undefined) el.innerHTML = dict[key];
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      document.documentElement.lang = lang;
+      localStorage.setItem('lang', lang);
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.dataset.lang));
+    });
+
+    setLang(localStorage.getItem('lang') || 'en');
+
+    // stop shimmer when image loaded
+    document.querySelectorAll('.photo-wrap img, .map-phone img').forEach(img => {
+      const stop = () => img.closest('.photo-wrap, .map-phone')?.style.setProperty('animation', 'none');
+      if (img.complete) stop(); else img.addEventListener('load', stop);
+    });
+
+    // lightbox
+    const lb      = document.getElementById('lb');
+    const lbImg   = document.getElementById('lb-img');
+    const lbClose = document.getElementById('lb-close');
+
+    [...document.querySelectorAll('.photo-wrap[data-src]'),
+     ...document.querySelectorAll('.map-phone[data-src]')].forEach(el => {
+      el.addEventListener('click', () => {
+        lbImg.src = el.dataset.src;
+        lb.classList.add('open');
+      });
+    });
+
+    function closeLb() { lb.classList.remove('open'); lbImg.src = ''; }
+    lb.addEventListener('click', e => { if (e.target !== lbImg) closeLb(); });
+    lbClose.addEventListener('click', closeLb);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+  </script>
+
+</body>
+</html>
