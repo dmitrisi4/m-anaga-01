@@ -109,6 +109,27 @@
       max-width: 480px;
     }
 
+    .hero > * { position: relative; z-index: 1; }
+
+    #hero-grain {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+    }
+
+    .hero-by {
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      margin-top: 0.6rem;
+      font-style: normal;
+    }
+
     .hero-arrow {
       position: absolute;
       bottom: 2.5rem;
@@ -421,9 +442,11 @@
 
   <!-- HERO -->
   <section class="hero">
+    <canvas id="hero-grain"></canvas>
     <div class="hero-tag" data-i18n="hero.tag">Tenerife · Anaga · hidden route</div>
     <h1>Anaga</h1>
-    <p class="hero-sub" data-i18n="hero.sub">Not on any map. Untouched by tourists. Just beautiful.</p>
+    <p class="hero-sub" data-i18n="hero.sub">A trail in Anaga.</p>
+    <p class="hero-by">— DS</p>
     <div class="hero-arrow" data-i18n="hero.arrow">↓ scroll</div>
   </section>
 
@@ -696,6 +719,32 @@
     });
 
     setLang(localStorage.getItem('lang') || 'en');
+
+    // hero film grain via canvas
+    (function() {
+      const canvas = document.getElementById('hero-grain');
+      const ctx = canvas.getContext('2d');
+      let raf;
+      function resize() {
+        canvas.width  = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+      function draw() {
+        const w = canvas.width, h = canvas.height;
+        const img = ctx.createImageData(w, h);
+        const d = img.data;
+        for (let i = 0; i < d.length; i += 4) {
+          const v = Math.random() * 255 | 0;
+          d[i] = d[i+1] = d[i+2] = v;
+          d[i+3] = 255;
+        }
+        ctx.putImageData(img, 0, 0);
+        raf = requestAnimationFrame(draw);
+      }
+      resize();
+      draw();
+      window.addEventListener('resize', () => { resize(); });
+    })();
 
     // stop shimmer when image loaded
     document.querySelectorAll('.photo-wrap img, .map-phone img').forEach(img => {
